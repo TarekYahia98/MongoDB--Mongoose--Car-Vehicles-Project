@@ -6,8 +6,8 @@ import {
   Patch,
   Post,
   Get,
-  Query,
-  Request, 
+  Query, 
+  Request,
   Session,
   UseGuards,
   NotFoundException,
@@ -15,7 +15,7 @@ import {
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
 import { createUserDto } from './dtos/create-user.dto';
-import { serialize } from './interceptors/serialize.interceptor';
+import { serialize } from '../interceptors/serialize.interceptor';
 import { tokensDto } from './dtos/tokens.dto';
 import { RefreshJwtGuard } from '../guards/refresh-token.guard';
 import { UserDto } from './dtos/user.dto';

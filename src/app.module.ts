@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { ReportsModule } from './reports/reports.module';
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -12,6 +13,7 @@ const cookieSession = require('cookie-session');
   }),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/usersDB'),
     UsersModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
