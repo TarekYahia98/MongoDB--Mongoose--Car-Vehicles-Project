@@ -2,7 +2,7 @@ import { Expose, Transform} from "class-transformer";
 
 export class ReportDto {
     @Expose()
-    id:number;
+    id:string;
     @Expose()
     approved:boolean;
     @Expose()
@@ -20,7 +20,7 @@ export class ReportDto {
     @Expose()
     mileage:number;
 
-    @Transform(({ obj }) => obj.user.id)
+    @Transform(({ obj }) => obj.user._id)
     @Expose()
-    userId:number;
+    userId:string;
 }
