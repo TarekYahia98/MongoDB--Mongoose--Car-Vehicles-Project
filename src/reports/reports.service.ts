@@ -13,7 +13,30 @@ export class ReportsService {
     private readonly reportModel: Model<ReportDocument>,
   ) {}
 
-  createEstimate({ make, model, long, lat, year, mileage }: GetEstimateDto) {}
+  createEstimate({ make, model, long, lat, year, mileage }: GetEstimateDto) {
+    return this.reportModel.aggregate([
+      {
+        $match: {
+          make: make,
+          model: model,
+          long: { $gt: long - 5, $lt: long + 5 },
+          lat: { $gt: lat - 5, $lt: lat + 5 },
+          year: { $gt: year - 3, $lt: year + 3 },
+          mileage: { $gt: mileage - 5000, $lt: mileage + 5000 },
+          approved: true,
+        },
+      },
+      {
+        $sort: { mileage: -1 },
+      },
+      { $limit: 3 },
+      {
+        $group: { _id: null, averagePrice: { $avg: '$price' } },
+      },
+
+      { $project: { _id: 0, YourCarPrice: '$averagePrice' } },
+    ]);
+  }
 
   async create(reportDto: CreateReportDto, user: User) {
     const report = await this.reportModel.create(reportDto);
