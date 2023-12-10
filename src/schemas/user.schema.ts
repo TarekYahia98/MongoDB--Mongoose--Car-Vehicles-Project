@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 
-export type UserDocument = User & Document;
+// export type UserDocument = User & Document;
+export type UserDocument = HydratedDocument<User>;
 
 @Schema({ collection: 'UsersCollection' })
 export class User {
-  
-  @Prop()
-  id: string;
+  // @Prop()
+  // _id: Types.ObjectId;
 
   @Prop()
   email: string;
@@ -15,7 +15,7 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop({default: true})
+  @Prop({ default: true })
   admin: boolean;
 }
 

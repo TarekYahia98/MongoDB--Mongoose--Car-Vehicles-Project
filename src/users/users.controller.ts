@@ -6,7 +6,7 @@ import {
   Patch,
   Post,
   Get,
-  Query, 
+  Query,
   Request,
   Session,
   UseGuards,
@@ -23,7 +23,8 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { JwtGuard } from '../guards/jwt-auth.guard';
 import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from '../schemas/user.schema';
+import { User, UserDocument } from '../schemas/user.schema';
+import { Types } from 'mongoose';
 
 @Controller('auth')
 export class UsersController {
@@ -92,7 +93,7 @@ export class UsersController {
   @serialize(UserDto)
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  whoAmI(@CurrentUser() user: User) {
+  whoAmI(@CurrentUser() user: UserDocument) {
     return user;
   }
 
@@ -100,9 +101,7 @@ export class UsersController {
   @Get('/:id')
   async findUserById(@Param('id') id: string) {
     const user = await this.usersService.findById(id);
-    if (!user) {
-      throw new NotFoundException('User Not Found');
-    }
+
     return user;
   }
 

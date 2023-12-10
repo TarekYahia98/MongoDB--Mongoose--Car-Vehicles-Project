@@ -5,13 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { JwtService} from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
-import { User } from '../schemas/user.schema';
+import { UserDocument } from '../schemas/user.schema';
 import { MailerService } from '@nestjs-modules/mailer';
-
-
 
 const scrypt = promisify(_scrypt);
 
@@ -27,15 +25,13 @@ export class AuthService {
     const users = await this.usersService.findOne(email);
     if (users) {
       throw new BadRequestException('Email is Already Used');
-    
     }
-      const salt = randomBytes(8).toString('hex');
-      const hash = (await scrypt(password, salt, 32)) as Buffer;
-      const result = salt + '.' + hash.toString('hex');
-      const user = await this.usersService.create(email, result);
-      return user;
-    }
-    
+    const salt = randomBytes(8).toString('hex');
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const result = salt + '.' + hash.toString('hex');
+    const user = await this.usersService.create(email, result);
+    return user;
+  }
 
   async signin(email: string, password: string) {
     const user = await this.usersService.findOne(email);
@@ -50,8 +46,8 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User) {
-    const payload = { sub: user.id, email: user.email };
+  async login(user: UserDocument) {
+    const payload = { sub: user._id, email: user.email };
     return {
       ...user,
       accessToken: this.jwtService.sign(payload, {
@@ -63,8 +59,8 @@ export class AuthService {
       }),
     };
   }
-  async refreshToken(user: User) {
-    const payload = { sub: user.id, email: user.email };
+  async refreshToken(user: UserDocument) {
+    const payload = { sub: user._id, email: user.email };
     return {
       accessToken: this.jwtService.sign(payload, {
         secret: process.env.jwt_secret,
@@ -97,22 +93,27 @@ export class AuthService {
     };
   }
 
-
-  async resetPassword(body: {newPassword :string}, req: { headers: { authorization: string; }; }){ 
+  async resetPassword(
+    body: { newPassword: string },
+    req: { headers: { authorization: string } },
+  ) {
     let token: string;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-    const user = this.jwtService.decode(token)
-    const userData = await this.usersService.findOne(user.email)
-    const { newPassword } = body
-    const scrypt = promisify(_scrypt);
-    const salt = randomBytes(8).toString('hex');
-    const hash = (await scrypt(newPassword, salt, 32)) as Buffer;
-    const result = salt + '.' + hash.toString('hex');
-    userData.password = result;
-    return userData.save();
-  } else {
-  throw new UnauthorizedException();
-  }
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization.split(' ')[1];
+      const user = this.jwtService.decode(token);
+      const userData = await this.usersService.findOne(user.email);
+      const { newPassword } = body;
+      const scrypt = promisify(_scrypt);
+      const salt = randomBytes(8).toString('hex');
+      const hash = (await scrypt(newPassword, salt, 32)) as Buffer;
+      const result = salt + '.' + hash.toString('hex');
+      userData.password = result;
+      return userData.save();
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }

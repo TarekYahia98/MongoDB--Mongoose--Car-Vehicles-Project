@@ -1,14 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from './user.schema';
 
-export type ReportDocument = Report & Document;
+export type ReportDocument = HydratedDocument<Report>;
 
 @Schema({ collection: 'ReportsCollection' })
 export class Report {
-  @Prop()
-  id: string;
-
   @Prop({ default: false })
   approved: boolean;
 

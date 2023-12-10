@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User, UserDocument } from '../schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { promisify } from 'util';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
@@ -9,7 +9,7 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
   create(email: string, password: string) {
@@ -31,10 +31,16 @@ export class UsersService {
     if (!id) {
       return null;
     }
-    return this.userModel.findOne({ _id: id });
+
+    const user = this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    return user;
   }
 
-  
   async update(id: string, body: UpdateUserDto) {
     const user = await this.userModel.findOne({ _id: id });
     if (!user) {
@@ -48,7 +54,6 @@ export class UsersService {
     user.password = result;
     return user.save();
   }
-
 
   async remove(id: string) {
     const user = await this.userModel.findOne({ _id: id });

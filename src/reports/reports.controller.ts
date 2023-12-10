@@ -5,7 +5,7 @@ import { ReportDto } from './dtos/report.dto';
 import { serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { CreateReportDto } from './dtos/create-report.dto';
-import { User } from '../schemas/user.schema';
+import { UserDocument } from '../schemas/user.schema';
 import { AdminGuard } from '../guards/admin.guard';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
@@ -23,7 +23,7 @@ export class ReportsController {
   @Post('/newReport')
   @UseGuards(AuthGuard)
   @serialize(ReportDto)
-  createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
+  createReport(@Body() body: CreateReportDto, @CurrentUser() user: UserDocument) {
     return this.reportsService.create(body, user);
   }
 

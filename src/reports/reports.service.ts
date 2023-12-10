@@ -3,14 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Report, ReportDocument } from '../schemas/report.schema';
 import { CreateReportDto } from './dtos/create-report.dto';
-import { User } from '../schemas/user.schema';
+import { UserDocument } from '../schemas/user.schema';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
 
 @Injectable()
 export class ReportsService {
   constructor(
     @InjectModel(Report.name)
-    private readonly reportModel: Model<ReportDocument>,
+    private readonly reportModel: Model<Report>,
   ) {}
 
   createEstimate({ make, model, long, lat, year, mileage }: GetEstimateDto) {
@@ -38,7 +38,7 @@ export class ReportsService {
     ]);
   }
 
-  async create(reportDto: CreateReportDto, user: User) {
+  async create(reportDto: CreateReportDto, user: UserDocument) {
     const report = await this.reportModel.create(reportDto);
     report.user = user;
     await report.save();
