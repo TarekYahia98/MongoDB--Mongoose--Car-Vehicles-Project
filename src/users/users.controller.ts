@@ -25,7 +25,9 @@ import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Types } from 'mongoose';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('auth')
 export class UsersController {
   constructor(
@@ -83,6 +85,7 @@ export class UsersController {
     return token;
   }
 
+  @ApiBearerAuth('JwtGuard')
   @serialize(UserDto)
   @UseGuards(JwtGuard)
   @Get('/users')

@@ -9,7 +9,9 @@ import { UserDocument } from '../schemas/user.schema';
 import { AdminGuard } from '../guards/admin.guard';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Report')
 @Controller('reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
