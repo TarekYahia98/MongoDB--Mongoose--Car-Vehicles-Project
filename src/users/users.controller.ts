@@ -59,6 +59,8 @@ export class UsersController {
     session.userId = null;
   }
 
+  
+  @ApiBearerAuth()
   @UseGuards(RefreshJwtGuard)
   @Post('/refreshToken')
   async getRefreshToken(
@@ -67,6 +69,7 @@ export class UsersController {
     return this.authService.refreshToken(req.user);
   }
 
+  @ApiBearerAuth()
   @serialize(UserDto)
   @Post('/resetPassword')
   async resetPassword(
@@ -85,7 +88,7 @@ export class UsersController {
     return token;
   }
 
-  @ApiBearerAuth('JwtGuard')
+  @ApiBearerAuth()
   @serialize(UserDto)
   @UseGuards(JwtGuard)
   @Get('/users')
