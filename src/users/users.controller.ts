@@ -59,7 +59,6 @@ export class UsersController {
     session.userId = null;
   }
 
-  
   @ApiBearerAuth()
   @UseGuards(RefreshJwtGuard)
   @Post('/refreshToken')

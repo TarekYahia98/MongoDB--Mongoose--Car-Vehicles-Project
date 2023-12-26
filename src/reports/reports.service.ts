@@ -33,7 +33,6 @@ export class ReportsService {
       {
         $group: { _id: null, averagePrice: { $avg: '$price' } },
       },
-
       { $project: { _id: 0, YourCarPrice: '$averagePrice' } },
     ]);
   }
@@ -51,7 +50,8 @@ export class ReportsService {
       throw new NotFoundException('Report Not Found');
     }
     report.approved = approved;
-    return report.save();
+    await report.save();
+    return report;
   }
 
   async remove(id: string) {
